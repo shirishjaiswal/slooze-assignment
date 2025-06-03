@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Package, Eye, EyeOff } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 const Login: React.FC = () => {
   const router = useRouter();
@@ -211,6 +212,24 @@ const Login: React.FC = () => {
             Connect to backend, and make proper authentication verification via
             mail, and fetching the data from the db.
           </p>
+        </section>
+
+        <section className="mt-6">
+          <Link
+            href="https://github.com/shirishjaiswal/slooze-assignment.git"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center px-5 py-2.5 bg-white text-indigo-700 font-semibold rounded-lg shadow hover:bg-indigo-100 transition duration-300"
+          >
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 .5C5.73.5.5 5.74.5 12.02c0 5.1 3.29 9.42 7.86 10.96.58.11.79-.25.79-.55 0-.27-.01-1.18-.02-2.14-3.2.7-3.88-1.53-3.88-1.53-.52-1.3-1.26-1.64-1.26-1.64-1.03-.7.08-.69.08-.69 1.14.08 1.74 1.18 1.74 1.18 1.01 1.73 2.64 1.23 3.29.94.1-.73.39-1.23.71-1.51-2.55-.29-5.23-1.27-5.23-5.66 0-1.25.44-2.27 1.17-3.07-.12-.29-.51-1.47.11-3.06 0 0 .96-.31 3.15 1.18a10.91 10.91 0 012.87-.39c.97.01 1.95.13 2.87.39 2.18-1.49 3.13-1.18 3.13-1.18.63 1.59.24 2.77.12 3.06.73.8 1.17 1.82 1.17 3.07 0 4.4-2.69 5.37-5.25 5.65.4.35.76 1.05.76 2.12 0 1.53-.01 2.76-.01 3.14 0 .3.2.66.8.55A10.52 10.52 0 0023.5 12C23.5 5.74 18.27.5 12 .5z" />
+            </svg>
+            View on GitHub
+          </Link>
         </section>
       </div>
     </div>
