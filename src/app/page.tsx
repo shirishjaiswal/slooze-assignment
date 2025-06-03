@@ -33,7 +33,7 @@ const Login: React.FC = () => {
       return;
     }
 
-    router.push("/home/products");
+    router.replace("/home/products");
   };
 
   return (
