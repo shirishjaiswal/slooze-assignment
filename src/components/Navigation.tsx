@@ -59,7 +59,7 @@ const Navigation: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
               onClick={() => toggleLanguage(locale === "en" ? "es" : "en")}
               className="px-4 py-2 bg-blue-600 text-white rounded"
             >
-             {locale === "en" ? "Español" : "English"}
+             {locale === "en" ? "English" : "Español"}
             </Button>
             <div className="flex items-center space-x-3 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <div className="hidden sm:block text-right">
