@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, Sun, Moon, LogOut, User } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/langSwitcher";
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -11,6 +12,7 @@ interface HeaderProps {
 const Navigation: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const { isDark, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
+  const { locale, toggleLanguage } = useLanguage()
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-40">
@@ -53,6 +55,12 @@ const Navigation: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
               )}
             </Button>
 
+            <Button
+              onClick={() => toggleLanguage(locale === "en" ? "es" : "en")}
+              className="px-4 py-2 bg-blue-600 text-white rounded"
+            >
+             {locale === "en" ? "Español" : "English"}
+            </Button>
             <div className="flex items-center space-x-3 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <div className="hidden sm:block text-right">
                 <p className="text-sm font-semibold text-gray-900 dark:text-white">

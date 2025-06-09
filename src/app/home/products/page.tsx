@@ -13,15 +13,19 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { categories, mockProducts } from "./data";
+import { categories, categoriesES, mockProducts, Product, mockProductsES } from "./data";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/contexts/langSwitcher";
 
 const Products: React.FC = () => {
+  const { locale } = useLanguage()
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const router = useRouter();
-  const filteredProducts = mockProducts.filter((product) => {
+  let filteredProducts = locale === "en" ? mockProducts : mockProductsES;
+  let categoriesToUse = locale === "en" ? categories :categoriesES;
+  filteredProducts = filteredProducts.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category.toLowerCase().includes(searchTerm.toLowerCase());
@@ -29,6 +33,30 @@ const Products: React.FC = () => {
       selectedCategory === "All" || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+
+  const filteredCategories = categoriesToUse.filter((category) =>
+    filteredProducts.some((product) => product.category === category)
+  );
+
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
+
+  const toggleCategory = (category: string) => {
+    setOpenCategory((prev) => (prev === category ? null : category));
+  };
+  const categoryProductMap = new Map<string, Product[]>();
+
+  filteredCategories.forEach((category) => {
+    const products = filteredProducts.filter(
+      (product) => product.category === category
+    );
+    categoryProductMap.set(category, products);
+  });
+  const [groupByCategory, setGroupByCategory] = useState(false);
+
+  const handleCatTab = () => {
+    setGroupByCategory(!groupByCategory);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -78,6 +106,13 @@ const Products: React.FC = () => {
           <Plus className="h-4 w-4 mr-2" />
           Add New Product
         </Button>
+        <Button
+          onClick={handleCatTab}
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          toggle
+        </Button>
       </div>
 
       <div className="shadow-md border rounded-lg p-6 bg-white dark:bg-gray-900">
@@ -96,7 +131,7 @@ const Products: React.FC = () => {
           <div className="flex items-center gap-2">
             <Filter className="h-5 w-5 text-gray-500 mr-1" />
             <div className="flex gap-2 flex-wrap">
-              {categories.map((category) => (
+              {categoriesToUse.map((category) => (
                 <Button
                   key={category}
                   variant={
@@ -118,7 +153,7 @@ const Products: React.FC = () => {
         </div>
       </div>
 
-      {filteredProducts.length > 0 ? (
+      {!groupByCategory && filteredProducts.length > 0 ? (
         <div className="overflow-x-auto rounded-lg border shadow-md bg-white dark:bg-gray-900 dark:border-gray-700">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-800">
@@ -195,21 +230,107 @@ const Products: React.FC = () => {
           </table>
         </div>
       ) : (
-        <div className="text-center p-12 bg-white dark:bg-gray-900 rounded-lg shadow-md border dark:border-gray-700">
-          <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-full w-fit mx-auto mb-4">
-            <Package className="h-12 w-12 text-gray-400" />
+        <div className="overflow-x-auto rounded-lg border shadow-md bg-white dark:bg-gray-900 dark:border-gray-700">
+          <div className="overflow-x-auto rounded-lg border shadow-md bg-white dark:bg-gray-900 dark:border-gray-700">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  <th className={getTHStyle()}>Product</th>
+                  <th className={getTHStyle()}>Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Price
+                  </th>
+                  <th className={getTHStyle()}>Stock</th>
+                  <th className="">Status</th>
+                  <th className={getTHStyle()}>Rating</th>
+                </tr>
+              </thead>
+            </table>
           </div>
-          <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-            No products found
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Try adjusting your search criteria or add a new product to get
-            started.
-          </p>
-          <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Your First Product
-          </Button>
+          {[...categoryProductMap.entries()].map(([category, products]) => (
+            <div key={category} className=" rounded-md shadow">
+              <button
+                onClick={() => toggleCategory(category)}
+                className="w-full px-4 py-3 text-left font-semibold bg-gray-100 hover:bg-gray-200 transition"
+              >
+                {category}
+              </button>
+              {openCategory === category && (
+                <div className="px-4 bg-white border-t">
+                  {products.length > 0 ? (
+                    <div className="overflow-x-auto rounded-lg bg-white dark:bg-gray-900 ">
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                          {products.map((product) => (
+                            <tr
+                              key={product.id}
+                              className=" dark:hover:bg-gray-800"
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
+                                <div>
+                                  <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                                    {product.name}
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                                {product.category}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600 dark:text-green-400">
+                                ${product.price.toFixed(2)}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white flex items-center gap-1">
+                                {getStockIcon(product.status)}
+                                {product.stock} units
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                  className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold border ${getStatusColor(
+                                    product.status
+                                  )}`}
+                                >
+                                  {product.status}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm flex items-center gap-1 text-yellow-400 font-medium">
+                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                {product.rating}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="flex items-center hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700"
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  View
+                                </Button>
+                                {user?.role === "Manager" && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="flex items-center hover:bg-green-50 hover:border-green-200 hover:text-green-700"
+                                  >
+                                    <Edit className="h-4 w-4 mr-1" />
+                                    Edit
+                                  </Button>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">
+                      No products in this category.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

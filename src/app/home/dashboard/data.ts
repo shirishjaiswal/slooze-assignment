@@ -48,7 +48,7 @@ const overviewData = [
   { month: "Oct", value: 1890 },
   { month: "Nov", value: 2390 },
   { month: "Dec", value: 3490 },
-];
+]; 
 
 const earningsData = [
   { month: "Jan", value: 0 },
